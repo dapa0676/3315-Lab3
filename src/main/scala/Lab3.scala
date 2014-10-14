@@ -215,6 +215,9 @@ object Lab3 extends jsy.util.JsyApplication {
       case Binary(And, v1, e2) => if (toBoolean(v1)) e2 else B(false)
       case Binary(Or, v1, e2) => if (toBoolean(v1)) B(true) else e2
       
+      case Binary(Seq, v1, e2) => e2
+      
+      case If(v1, e2, e3) => if (toBoolean(v1)) e2 else e3
       
       /* Cases that should never match. Your cases above should ensure this. */
       case Var(_) => throw new AssertionError("Gremlins: internal error, not closed expression.")
