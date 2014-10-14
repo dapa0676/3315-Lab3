@@ -126,6 +126,7 @@ object Lab3 extends jsy.util.JsyApplication {
       case Unary(Not, e1) => B(! eToB(e1))
       
       case Binary(Plus, e1, e2) => (eToVal(e1), eToVal(e2)) match {
+        case (S(s1), S(s2)) => S(s1 + s2)
         case (S(s1), v2) => S(s1 + toStr(v2))
         case (v1, S(s2)) => S(toStr(v1) + s2)
         case (v1, v2) => N(toNumber(v1) + toNumber(v2))
@@ -175,12 +176,45 @@ object Lab3 extends jsy.util.JsyApplication {
       /* Base Cases: Do Rules */
       case Print(v1) if isValue(v1) => println(pretty(v1)); Undefined
       
-        // ****** Your cases here
-      
       /* Inductive Cases: Search Rules */
       case Print(e1) => Print(step(e1))
       
-        // ****** Your cases here
+      case Unary(Neg, N(n1)) => N(-n1)
+      case Unary(Not, B(n1)) => B(!n1)
+      
+      case Binary(Plus, N(n1), N(n2)) => N(n1 + n2)
+      case Binary(Plus, N(n1), S(n2)) => S(n1 + n2)
+      case Binary(Plus, S(n1), N(n2)) => S(n1 + n2)
+      case Binary(Plus, S(n1), S(n2)) => S(n1 + n2)
+      
+      case Binary(Minus, N(n1), N(n2)) => N(n1 - n2)
+      case Binary(Times, N(n1), N(n2)) => N(n1 * n2)
+      case Binary(Div, N(n1), N(n2)) => N(n1 / n2)
+
+      case Binary(Gt, N(n1), N(n2)) => B(n1 > n2)
+      case Binary(Gt, N(n1), S(n2)) => B(toStr(N(n1)) > n2)
+      case Binary(Gt, S(n1), N(n2)) => B(n1 > toStr(N(n2)))
+      case Binary(Gt, S(n1), S(n2)) => B(toNumber(S(n1)) > toNumber(S(n2)))
+       
+      
+      case Binary(Lt, N(n1), N(n2)) => B(n1 < n2)
+      case Binary(Lt, N(n1), S(n2)) => B(toStr(N(n1)) < n2)
+      case Binary(Lt, S(n1), N(n2)) => B(n1 < toStr(N(n2)))
+      case Binary(Lt, S(n1), S(n2)) => B(toNumber(S(n1)) < toNumber(S(n2)))
+      
+      case Binary(Ge, N(n1), N(n2)) => B(n1 >= n2)
+      case Binary(Ge, N(n1), S(n2)) => B(toStr(N(n1)) >= n2)
+      case Binary(Ge, S(n1), N(n2)) => B(n1 >= toStr(N(n2)))
+      case Binary(Ge, S(n1), S(n2)) => B(toNumber(S(n1)) >= toNumber(S(n2)))
+      
+      case Binary(Le, N(n1), N(n2)) => B(n1 <= n2)
+      case Binary(Le, N(n1), S(n2)) => B(toStr(N(n1)) <= n2)
+      case Binary(Le, S(n1), N(n2)) => B(n1 <= toStr(N(n2)))
+      case Binary(Le, S(n1), S(n2)) => B(toNumber(S(n1)) <= toNumber(S(n2)))
+      
+      case Binary(And, v1, e2) => if (toBoolean(v1)) e2 else B(false)
+      case Binary(Or, v1, e2) => if (toBoolean(v1)) B(true) else e2
+      
       
       /* Cases that should never match. Your cases above should ensure this. */
       case Var(_) => throw new AssertionError("Gremlins: internal error, not closed expression.")
